@@ -4,26 +4,33 @@ namespace PuzzleGameCourse;
 
 public partial class Main : Node2D
 {
-    private Sprite2D _sprite;
+    private Sprite2D _cursor;
     private PackedScene _buildingScene;
+    private Button _placeBuildingButton;
 
     public override void _Ready()
     {
         _buildingScene = GD.Load<PackedScene>("res://scenes/building/Building.tscn");
-        _sprite = GetNode<Sprite2D>("Cursor");
+        _cursor = GetNode<Sprite2D>("Cursor");
+        _placeBuildingButton = GetNode<Button>("PlaceBuildingButton");
+        
+        _cursor.Visible = false;
+
+        _placeBuildingButton.Pressed += OnButtonPressed;
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event.IsActionPressed("left_click"))
+        if (_cursor.Visible && @event.IsActionPressed("left_click"))
         {
             PlaceBuildingAtMousePosition();
+            _cursor.Visible = false;
         }
     }
 
     public override void _Process(double delta)
     {
-        _sprite.GlobalPosition = GetMouseGridCellPosition() * 64;
+        _cursor.GlobalPosition = GetMouseGridCellPosition() * 64;
     }
 
     private Vector2 GetMouseGridCellPosition()
@@ -39,8 +46,13 @@ public partial class Main : Node2D
     {
         var building = _buildingScene.Instantiate<Node2D>();
         AddChild(building);
-        
+
         var gridPosition = GetMouseGridCellPosition();
         building.GlobalPosition = gridPosition * 64;
+    }
+
+    private void OnButtonPressed()
+    {
+        _cursor.Visible = true;
     }
 }
