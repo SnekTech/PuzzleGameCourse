@@ -1,0 +1,13 @@
+nupkg/
+
+.godot/
+bin/
+obj/
+.generated/
+.vs/
+.DS_Store
+
+*.translation
+*.blend1
+
+**/.idea
