@@ -9,7 +9,7 @@ public partial class Main : Node
     private PackedScene _buildingScene;
     private Button _placeBuildingButton;
 
-    private Vector2? _hoveredGridCell;
+    private Vector2I? _hoveredGridCell;
 
     public override void _Ready()
     {
