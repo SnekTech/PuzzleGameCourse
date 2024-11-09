@@ -1,12 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://bi34v5w138uap"]
+[gd_scene load_steps=4 format=3 uid="uid://bi34v5w138uap"]
 
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_ktuki"]
+[ext_resource type="TileSet" uid="uid://d1ihcf7a6y0du" path="res://resources/highlight_tileset.tres" id="2_sh5dd"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1c6l8"]
 size = Vector2(64, 64)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ktuki")
+
+[node name="HighlightTileMapLayer" type="TileMapLayer" parent="."]
+modulate = Color(1, 1, 1, 0.478431)
+tile_set = ExtResource("2_sh5dd")
 
 [node name="Cursor" type="Sprite2D" parent="."]
 texture = SubResource("PlaceholderTexture2D_1c6l8")
