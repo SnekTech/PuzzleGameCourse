@@ -3,7 +3,7 @@ using Godot;
 
 namespace PuzzleGameCourse;
 
-public partial class Main : Node2D
+public partial class Main : Node
 {
     private Sprite2D _cursor;
     private PackedScene _buildingScene;
@@ -11,7 +11,7 @@ public partial class Main : Node2D
     private TileMapLayer _highlightTileMapLayer;
 
     private Vector2? _hoveredGridCell;
-    private HashSet<Vector2> _occupiedCells = new();
+    private readonly HashSet<Vector2> _occupiedCells = new();
 
     public override void _Ready()
     {
@@ -27,10 +27,9 @@ public partial class Main : Node2D
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        var clickedCellIsOccupied = _occupiedCells.Contains(GetMouseGridCellPosition());
-        if (_cursor.Visible && @event.IsActionPressed("left_click") && !clickedCellIsOccupied)
+        if (_hoveredGridCell.HasValue && @event.IsActionPressed("left_click") && !_occupiedCells.Contains(_hoveredGridCell.Value))
         {
-            PlaceBuildingAtMousePosition();
+            PlaceBuildingAtHoveredCellPosition();
             _cursor.Visible = false;
         }
     }
@@ -49,21 +48,23 @@ public partial class Main : Node2D
 
     private Vector2 GetMouseGridCellPosition()
     {
-        var mousePosition = GetGlobalMousePosition();
+        var mousePosition = _highlightTileMapLayer.GetGlobalMousePosition();
         var gridPosition = mousePosition / 64;
         gridPosition = gridPosition.Floor();
 
         return gridPosition;
     }
 
-    private void PlaceBuildingAtMousePosition()
+    private void PlaceBuildingAtHoveredCellPosition()
     {
+        if(!_hoveredGridCell.HasValue)
+            return;
+        
         var building = _buildingScene.Instantiate<Node2D>();
         AddChild(building);
 
-        var gridPosition = GetMouseGridCellPosition();
-        building.GlobalPosition = gridPosition * 64;
-        _occupiedCells.Add(gridPosition);
+        building.GlobalPosition = _hoveredGridCell.Value * 64;
+        _occupiedCells.Add(_hoveredGridCell.Value);
 
         _hoveredGridCell = null;
         UpdateHighlightTileMapLayer();
@@ -72,7 +73,7 @@ public partial class Main : Node2D
     private void UpdateHighlightTileMapLayer()
     {
         _highlightTileMapLayer.Clear();
-        
+
         if (!_hoveredGridCell.HasValue)
             return;
 
