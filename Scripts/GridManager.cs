@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using PuzzleGameCourse.Autoload;
 using PuzzleGameCourse.Component;
 
 namespace PuzzleGameCourse;
@@ -14,6 +15,11 @@ public partial class GridManager : Node
     private TileMapLayer _baseTerrainTileMapLayer;
 
     private readonly HashSet<Vector2I> _occupiedCells = new();
+
+    public override void _Ready()
+    {
+        GameEvents.Instance.BuildingPlaced += OnBuildingPlaced;
+    }
 
     public bool IsTilePositionValid(Vector2I tilePosition)
     {
@@ -69,5 +75,10 @@ public partial class GridManager : Node
                 _highlightTileMapLayer.SetCell(tilePosition, 0, Vector2I.Zero);
             }
         }
+    }
+
+    private void OnBuildingPlaced(BuildingComponent buildingComponent)
+    {
+        MarkTileAsOccupied(buildingComponent.GetGridCellPosition());
     }
 }
