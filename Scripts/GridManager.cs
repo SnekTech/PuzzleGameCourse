@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Godot;
+using PuzzleGameCourse.Component;
 
 namespace PuzzleGameCourse;
 
@@ -29,20 +31,14 @@ public partial class GridManager : Node
         _occupiedCells.Add(tilePosition);
     }
 
-    public void HighlightValidTilesInRadius(Vector2I rootCell, int radius)
+    public void HighLightBuildableTiles()
     {
         ClearHighlightedTiles();
 
-        for (var x = rootCell.X - radius; x <= rootCell.X + radius; x++)
+        var buildingComponents = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>();
+        foreach (var buildingComponent in buildingComponents)
         {
-            for (var y = rootCell.Y - radius; y <= rootCell.Y + radius; y++)
-            {
-                var tilePosition = new Vector2I(x, y);
-                if (!IsTilePositionValid(tilePosition))
-                    continue;
-
-                _highlightTileMapLayer.SetCell(tilePosition, 0, Vector2I.Zero);
-            }
+            HighlightValidTilesInRadius(buildingComponent.GetGridCellPosition(), buildingComponent.BuildableRadius);
         }
     }
 
@@ -58,5 +54,20 @@ public partial class GridManager : Node
         gridPosition = gridPosition.Floor();
 
         return new Vector2I((int)gridPosition.X, (int)gridPosition.Y);
+    }
+
+    private void HighlightValidTilesInRadius(Vector2I rootCell, int radius)
+    {
+        for (var x = rootCell.X - radius; x <= rootCell.X + radius; x++)
+        {
+            for (var y = rootCell.Y - radius; y <= rootCell.Y + radius; y++)
+            {
+                var tilePosition = new Vector2I(x, y);
+                if (!IsTilePositionValid(tilePosition))
+                    continue;
+
+                _highlightTileMapLayer.SetCell(tilePosition, 0, Vector2I.Zero);
+            }
+        }
     }
 }
