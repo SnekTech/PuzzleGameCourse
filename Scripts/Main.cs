@@ -26,7 +26,7 @@ public partial class Main : Node
     public override void _UnhandledInput(InputEvent @event)
     {
         if (_hoveredGridCell.HasValue && @event.IsActionPressed("left_click") &&
-            _gridManager.IsTilePositionValid(_hoveredGridCell.Value))
+            _gridManager.IsTilePositionBuildable(_hoveredGridCell.Value))
         {
             PlaceBuildingAtHoveredCellPosition();
             _cursor.Visible = false;
@@ -54,7 +54,6 @@ public partial class Main : Node
         AddChild(building);
 
         building.GlobalPosition = _hoveredGridCell.Value * 64;
-        _gridManager.MarkTileAsOccupied(_hoveredGridCell.Value);
 
         _hoveredGridCell = null;
         _gridManager.ClearHighlightedTiles();
