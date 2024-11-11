@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using PuzzleGameCourse.Autoload;
 using PuzzleGameCourse.Component;
@@ -41,6 +42,20 @@ public partial class GridManager : Node
         }
     }
 
+    public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
+    {
+        ClearHighlightedTiles();
+        HighLightBuildableTiles();
+
+        var validTiles = GetValidTilesInRadius(rootCell, radius).ToHashSet();
+        var expandedTiles = validTiles.Except(_validBuildableTiles).Except(GetOccupiedTiles());
+        var altasCoords = new Vector2I(1, 0);
+        foreach (var tilePosition in expandedTiles)
+        {
+            _highlightTileMapLayer.SetCell(tilePosition, 0, altasCoords);
+        }
+    }
+
     public void ClearHighlightedTiles()
     {
         _highlightTileMapLayer.Clear();
@@ -58,7 +73,15 @@ public partial class GridManager : Node
     private void UpdateValidBuildableTiles(BuildingComponent buildingComponent)
     {
         var rootCell = buildingComponent.GetGridCellPosition();
-        var radius = buildingComponent.BuildableRadius;
+        var validTiles = GetValidTilesInRadius(rootCell, buildingComponent.BuildableRadius);
+        _validBuildableTiles.UnionWith(validTiles);
+
+        _validBuildableTiles.ExceptWith(GetOccupiedTiles());
+    }
+
+    private List<Vector2I> GetValidTilesInRadius(Vector2I rootCell, int radius)
+    {
+        var result = new List<Vector2I>();
         for (var x = rootCell.X - radius; x <= rootCell.X + radius; x++)
         {
             for (var y = rootCell.Y - radius; y <= rootCell.Y + radius; y++)
@@ -67,10 +90,18 @@ public partial class GridManager : Node
                 if (!IsTilePositionValid(tilePosition))
                     continue;
 
-                _validBuildableTiles.Add(tilePosition);
+                result.Add(tilePosition);
             }
         }
-        _validBuildableTiles.Remove(rootCell);
+
+        return result;
+    }
+
+    private IEnumerable<Vector2I> GetOccupiedTiles()
+    {
+        var buildingComponents = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>();
+        var occupiedTiles = buildingComponents.Select(x => x.GetGridCellPosition());
+        return occupiedTiles;
     }
 
     private void OnBuildingPlaced(BuildingComponent buildingComponent)

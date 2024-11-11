@@ -41,7 +41,7 @@ public partial class Main : Node
         if (_cursor.Visible && (!_hoveredGridCell.HasValue || gridPosition != _hoveredGridCell.Value))
         {
             _hoveredGridCell = gridPosition;
-            _gridManager.HighLightBuildableTiles();
+            _gridManager.HighlightExpandedBuildableTiles(_hoveredGridCell.Value, 3);
         }
     }
 
@@ -62,5 +62,6 @@ public partial class Main : Node
     private void OnButtonPressed()
     {
         _cursor.Visible = true;
+        _gridManager.HighLightBuildableTiles();
     }
 }
