@@ -50,7 +50,9 @@ public partial class Main : Node
         if (_toPlaceBuildingResource != null && _cursor.Visible && (!_hoveredGridCell.HasValue || gridPosition != _hoveredGridCell.Value))
         {
             _hoveredGridCell = gridPosition;
+            _gridManager.ClearHighlightedTiles();
             _gridManager.HighlightExpandedBuildableTiles(_hoveredGridCell.Value, _toPlaceBuildingResource.BuildableRadius);
+            _gridManager.HighlightResourceTiles(_hoveredGridCell.Value, _toPlaceBuildingResource.ResourceRadius);
         }
     }
 
