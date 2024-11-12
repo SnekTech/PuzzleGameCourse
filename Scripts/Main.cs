@@ -6,23 +6,29 @@ public partial class Main : Node
 {
     private GridManager _gridManager;
     private Sprite2D _cursor;
-    private PackedScene _buildingScene;
-    private Button _placeBuildingButton;
+    private PackedScene _towerScene;
+    private PackedScene _villageScene;
+    private Button _placeTowerButton;
+    private Button _placeVillageButton;
     private Node2D _ySortRoot;
 
     private Vector2I? _hoveredGridCell;
+    private PackedScene _toPlaceBuildingScene;
 
     public override void _Ready()
     {
-        _buildingScene = GD.Load<PackedScene>("res://scenes/building/Building.tscn");
+        _towerScene = GD.Load<PackedScene>("res://scenes/building/Tower.tscn");
+        _villageScene = GD.Load<PackedScene>("res://scenes/building/Village.tscn");
         _gridManager = GetNode<GridManager>("GridManager");
         _cursor = GetNode<Sprite2D>("Cursor");
-        _placeBuildingButton = GetNode<Button>("PlaceBuildingButton");
+        _placeTowerButton = GetNode<Button>("PlaceTowerButton");
+        _placeVillageButton = GetNode<Button>("PlaceVillageButton");
         _ySortRoot = GetNode<Node2D>("YSortRoot");
 
         _cursor.Visible = false;
 
-        _placeBuildingButton.Pressed += OnButtonPressed;
+        _placeTowerButton.Pressed += OnPlaceTowerButtonPressed;
+        _placeVillageButton.Pressed += OnPlaceVillageButtonPressed;
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -52,7 +58,7 @@ public partial class Main : Node
         if (!_hoveredGridCell.HasValue)
             return;
 
-        var building = _buildingScene.Instantiate<Node2D>();
+        var building = _toPlaceBuildingScene.Instantiate<Node2D>();
         _ySortRoot.AddChild(building);
 
         building.GlobalPosition = _hoveredGridCell.Value * 64;
@@ -61,8 +67,16 @@ public partial class Main : Node
         _gridManager.ClearHighlightedTiles();
     }
 
-    private void OnButtonPressed()
+    private void OnPlaceTowerButtonPressed()
     {
+        _toPlaceBuildingScene = _towerScene;
+        _cursor.Visible = true;
+        _gridManager.HighLightBuildableTiles();
+    }
+    
+    private void OnPlaceVillageButtonPressed()
+    {
+        _toPlaceBuildingScene = _villageScene;
         _cursor.Visible = true;
         _gridManager.HighLightBuildableTiles();
     }
