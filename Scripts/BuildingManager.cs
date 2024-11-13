@@ -1,5 +1,7 @@
-﻿using Godot;
+﻿using System.Linq;
+using Godot;
 using PuzzleGameCourse.Building;
+using PuzzleGameCourse.Component;
 using PuzzleGameCourse.UI;
 
 namespace PuzzleGameCourse;
@@ -63,8 +65,6 @@ public partial class BuildingManager : Node
                 }
 
                 break;
-            default:
-                break;
         }
     }
 
@@ -118,6 +118,14 @@ public partial class BuildingManager : Node
 
     private void DestroyBuildingAtHoveredCellPosition()
     {
+        var buildingComponent = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>()
+            .FirstOrDefault(buildingComponent => buildingComponent.GetGridCellPosition() == _hoveredGridCell);
+        if (buildingComponent == null)
+            return;
+
+        _currentlyUsedResourceCount -= buildingComponent.BuildingResource.ResourceCost;
+        buildingComponent.Destroy();
+        GD.Print(AvailableResourceCount);
     }
 
     private void ClearBuildingGhost()
