@@ -16,13 +16,14 @@ public partial class BuildingManager : Node
     private Node2D ySortRoot;
 
     [Export]
-    private Sprite2D cursor;
+    private PackedScene buildingGhostScene;
 
     private int _currentResourceCount;
     private int _startingResourceCount = 4;
     private int _currentlyUsedResourceCount;
     private BuildingResource _toPlaceBuildingResource;
     private Vector2I? _hoveredGridCell;
+    private Node2D _buildingGhost;
 
     private int AvailableResourceCount => _startingResourceCount + _currentResourceCount - _currentlyUsedResourceCount;
 
@@ -41,16 +42,18 @@ public partial class BuildingManager : Node
             AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost)
         {
             PlaceBuildingAtHoveredCellPosition();
-            cursor.Visible = false;
         }
     }
 
     public override void _Process(double delta)
     {
-        var gridPosition = gridManager.GetMouseGridCellPosition();
-        cursor.GlobalPosition = gridPosition * 64;
+        if (!IsInstanceValid(_buildingGhost))
+            return;
 
-        if (_toPlaceBuildingResource != null && cursor.Visible &&
+        var gridPosition = gridManager.GetMouseGridCellPosition();
+        _buildingGhost.GlobalPosition = gridPosition * 64;
+
+        if (_toPlaceBuildingResource != null &&
             (!_hoveredGridCell.HasValue || gridPosition != _hoveredGridCell.Value))
         {
             _hoveredGridCell = gridPosition;
@@ -75,7 +78,8 @@ public partial class BuildingManager : Node
         gridManager.ClearHighlightedTiles();
 
         _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
-        GD.Print(AvailableResourceCount);
+        _buildingGhost.QueueFree();
+        _buildingGhost = null;
     }
 
     private void OnResourceTilesUpdated(int resourceCount)
@@ -85,8 +89,18 @@ public partial class BuildingManager : Node
 
     private void OnBuildingResourceSelected(BuildingResource buildingResource)
     {
+        if (IsInstanceValid(_buildingGhost))
+        {
+            _buildingGhost.QueueFree();
+        }
+
+        _buildingGhost = buildingGhostScene.Instantiate<Node2D>();
+        ySortRoot.AddChild(_buildingGhost);
+
+        var buildingSprite = buildingResource.SpriteScene.Instantiate<Sprite2D>();
+        _buildingGhost.AddChild(buildingSprite);
+        
         _toPlaceBuildingResource = buildingResource;
-        cursor.Visible = true;
         gridManager.HighLightBuildableTiles();
     }
 }
