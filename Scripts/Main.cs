@@ -1,5 +1,6 @@
 using Godot;
 using PuzzleGameCourse.Building;
+using PuzzleGameCourse.UI;
 
 namespace PuzzleGameCourse;
 
@@ -9,9 +10,8 @@ public partial class Main : Node
     private Sprite2D _cursor;
     private BuildingResource _towerResource;
     private BuildingResource _villageResource;
-    private Button _placeTowerButton;
-    private Button _placeVillageButton;
     private Node2D _ySortRoot;
+    private GameUI _gameUI;
 
     private Vector2I? _hoveredGridCell;
     private BuildingResource _toPlaceBuildingResource;
@@ -22,14 +22,13 @@ public partial class Main : Node
         _villageResource = GD.Load<BuildingResource>("res://resources/building/village.tres");
         _gridManager = GetNode<GridManager>("GridManager");
         _cursor = GetNode<Sprite2D>("Cursor");
-        _placeTowerButton = GetNode<Button>("PlaceTowerButton");
-        _placeVillageButton = GetNode<Button>("PlaceVillageButton");
         _ySortRoot = GetNode<Node2D>("YSortRoot");
+        _gameUI = GetNode<GameUI>("GameUI");
 
         _cursor.Visible = false;
 
-        _placeTowerButton.Pressed += OnPlaceTowerButtonPressed;
-        _placeVillageButton.Pressed += OnPlaceVillageButtonPressed;
+        _gameUI.PlaceTowerButtonPressed += OnPlaceTowerButtonPressed;
+        _gameUI.PlaceVillageButtonPressed += OnPlaceVillageButtonPressed;
 
         _gridManager.ResourceTilesUpdated += OnResourceTilesUpdated;
     }
@@ -49,11 +48,13 @@ public partial class Main : Node
         var gridPosition = _gridManager.GetMouseGridCellPosition();
         _cursor.GlobalPosition = gridPosition * 64;
 
-        if (_toPlaceBuildingResource != null && _cursor.Visible && (!_hoveredGridCell.HasValue || gridPosition != _hoveredGridCell.Value))
+        if (_toPlaceBuildingResource != null && _cursor.Visible &&
+            (!_hoveredGridCell.HasValue || gridPosition != _hoveredGridCell.Value))
         {
             _hoveredGridCell = gridPosition;
             _gridManager.ClearHighlightedTiles();
-            _gridManager.HighlightExpandedBuildableTiles(_hoveredGridCell.Value, _toPlaceBuildingResource.BuildableRadius);
+            _gridManager.HighlightExpandedBuildableTiles(_hoveredGridCell.Value,
+                _toPlaceBuildingResource.BuildableRadius);
             _gridManager.HighlightResourceTiles(_hoveredGridCell.Value, _toPlaceBuildingResource.ResourceRadius);
         }
     }
@@ -78,7 +79,7 @@ public partial class Main : Node
         _cursor.Visible = true;
         _gridManager.HighLightBuildableTiles();
     }
-    
+
     private void OnPlaceVillageButtonPressed()
     {
         _toPlaceBuildingResource = _villageResource;
