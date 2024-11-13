@@ -8,8 +8,6 @@ public partial class Main : Node
 {
     private GridManager _gridManager;
     private Sprite2D _cursor;
-    private BuildingResource _towerResource;
-    private BuildingResource _villageResource;
     private Node2D _ySortRoot;
     private GameUI _gameUI;
 
@@ -18,8 +16,6 @@ public partial class Main : Node
 
     public override void _Ready()
     {
-        _towerResource = GD.Load<BuildingResource>("res://resources/building/tower.tres");
-        _villageResource = GD.Load<BuildingResource>("res://resources/building/village.tres");
         _gridManager = GetNode<GridManager>("GridManager");
         _cursor = GetNode<Sprite2D>("Cursor");
         _ySortRoot = GetNode<Node2D>("YSortRoot");
@@ -27,9 +23,7 @@ public partial class Main : Node
 
         _cursor.Visible = false;
 
-        _gameUI.PlaceTowerButtonPressed += OnPlaceTowerButtonPressed;
-        _gameUI.PlaceVillageButtonPressed += OnPlaceVillageButtonPressed;
-
+        _gameUI.BuildingResourceSelected += OnBuildingResourceSelected;
         _gridManager.ResourceTilesUpdated += OnResourceTilesUpdated;
     }
 
@@ -73,16 +67,9 @@ public partial class Main : Node
         _gridManager.ClearHighlightedTiles();
     }
 
-    private void OnPlaceTowerButtonPressed()
+    private void OnBuildingResourceSelected(BuildingResource buildingResource)
     {
-        _toPlaceBuildingResource = _towerResource;
-        _cursor.Visible = true;
-        _gridManager.HighLightBuildableTiles();
-    }
-
-    private void OnPlaceVillageButtonPressed()
-    {
-        _toPlaceBuildingResource = _villageResource;
+        _toPlaceBuildingResource = buildingResource;
         _cursor.Visible = true;
         _gridManager.HighLightBuildableTiles();
     }

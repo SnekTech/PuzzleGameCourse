@@ -1,33 +1,36 @@
-﻿using System;
-using Godot;
+﻿using Godot;
+using PuzzleGameCourse.Building;
 
 namespace PuzzleGameCourse.UI;
 
 public partial class GameUI : MarginContainer
 {
     [Signal]
-    public delegate void PlaceTowerButtonPressedEventHandler();
-    [Signal]
-    public delegate void PlaceVillageButtonPressedEventHandler();
-    
-    private Button _placeTowerButton;
-    private Button _placeVillageButton;
+    public delegate void BuildingResourceSelectedEventHandler(BuildingResource buildingResource);
+
+    [Export]
+    private BuildingResource[] _buildingResources;
+
+    private HBoxContainer _hBoxContainer;
+
     public override void _Ready()
     {
-        _placeTowerButton = GetNode<Button>("%PlaceTowerButton");
-        _placeVillageButton = GetNode<Button>("%PlaceVillageButton");
-
-        _placeTowerButton.Pressed += OnPlaceTowerButtonPressed;
-        _placeVillageButton.Pressed += OnPlaceVillageButtonPressed;
+        _hBoxContainer = GetNode<HBoxContainer>("HBoxContainer");
+        
+        CreateBuildingButtons();
     }
 
-    private void OnPlaceTowerButtonPressed()
+    private void CreateBuildingButtons()
     {
-        EmitSignal(SignalName.PlaceTowerButtonPressed);
-    }
-
-    private void OnPlaceVillageButtonPressed()
-    {
-        EmitSignal(SignalName.PlaceVillageButtonPressed);
+        foreach (var buildingResource in _buildingResources)
+        {
+            var buildingButton = new Button();
+            buildingButton.Text = $"Place {buildingResource.DisplayName}";
+            _hBoxContainer.AddChild(buildingButton);
+            buildingButton.Pressed += () =>
+            {
+                EmitSignal(SignalName.BuildingResourceSelected, buildingResource);
+            };
+        }
     }
 }
