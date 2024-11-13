@@ -6,17 +6,13 @@ namespace PuzzleGameCourse;
 
 public partial class BuildingManager : Node
 {
-    [Export]
-    private GridManager gridManager;
+    private static readonly StringName ActionLeftClick = "left_click";
+    private static readonly StringName ActionCancel = "cancel";
 
-    [Export]
-    private GameUI gameUI;
-
-    [Export]
-    private Node2D ySortRoot;
-
-    [Export]
-    private PackedScene buildingGhostScene;
+    [Export] private GridManager gridManager;
+    [Export] private GameUI gameUI;
+    [Export] private Node2D ySortRoot;
+    [Export] private PackedScene buildingGhostScene;
 
     private int _currentResourceCount;
     private int _startingResourceCount = 4;
@@ -35,10 +31,14 @@ public partial class BuildingManager : Node
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (
+        if (@event.IsActionPressed(ActionCancel))
+        {
+            ClearBuildingGhost();
+        }
+        else if (
             _hoveredGridCell.HasValue &&
             _toPlaceBuildingResource != null &&
-            @event.IsActionPressed("left_click") &&
+            @event.IsActionPressed(ActionLeftClick) &&
             IsBuildingPlaceableAtTile(_hoveredGridCell.Value)
         )
         {
@@ -92,11 +92,21 @@ public partial class BuildingManager : Node
 
         building.GlobalPosition = _hoveredGridCell.Value * 64;
 
+        _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
+
+        ClearBuildingGhost();
+    }
+
+    private void ClearBuildingGhost()
+    {
         _hoveredGridCell = null;
         gridManager.ClearHighlightedTiles();
 
-        _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
-        _buildingGhost.QueueFree();
+        if (IsInstanceValid(_buildingGhost))
+        {
+            _buildingGhost.QueueFree();
+        }
+
         _buildingGhost = null;
     }
 
