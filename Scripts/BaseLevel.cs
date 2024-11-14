@@ -2,7 +2,7 @@ using Godot;
 
 namespace PuzzleGameCourse;
 
-public partial class Main : Node
+public partial class BaseLevel : Node
 {
     private GridManager gridManager;
     private GoldMine goldMine;

@@ -1,6 +1,6 @@
-[gd_scene load_steps=10 format=4 uid="uid://bi34v5w138uap"]
+[gd_scene load_steps=10 format=3 uid="uid://bi34v5w138uap"]
 
-[ext_resource type="Script" path="res://Scripts/Main.cs" id="1_ktuki"]
+[ext_resource type="Script" path="res://Scripts/BaseLevel.cs" id="1_sbgvr"]
 [ext_resource type="PackedScene" uid="uid://c20pk0hxh1ctq" path="res://scenes/manager/BuildingManager.tscn" id="2_67pcy"]
 [ext_resource type="PackedScene" uid="uid://bnnvveuuac4r3" path="res://scenes/manager/GridManager.tscn" id="2_hkynl"]
 [ext_resource type="TileSet" uid="uid://bnocn3brgbshk" path="res://resources/tiles.tres" id="2_sbk22"]
@@ -10,8 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://c3wto5nueea3" path="res://scenes/GoldMine.tscn" id="7_5pci2"]
 [ext_resource type="PackedScene" uid="uid://dnokhclh3am6b" path="res://scenes/building/BuildingGhost.tscn" id="8_2onm6"]
 
-[node name="Main" type="Node"]
-script = ExtResource("1_ktuki")
+[node name="BaseLevel" type="Node"]
+script = ExtResource("1_sbgvr")
 
 [node name="BuildingManager" parent="." node_paths=PackedStringArray("gridManager", "gameUI", "ySortRoot") instance=ExtResource("2_67pcy")]
 gridManager = NodePath("../GridManager")
@@ -28,20 +28,12 @@ y_sort_enabled = true
 
 [node name="BaseTerrainTileMapLayer" type="TileMapLayer" parent="YSortRoot"]
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAADAAMAAAAFAAAAAAAEAAMAAAAGAAEAAAAEAAIAAAAFAAAAAAAFAAIAAAAGAAAAAAAFAAMAAAAGAAEAAAAGAAIAAAAHAAAAAAAGAAMAAAAHAAEAAAAGAAQAAAAGAAEAAAAFAAQAAAAGAAEAAAAEAAQAAAAGAAEAAAADAAQAAAAFAAEAAAADAAUAAAAFAAEAAAADAAYAAAAFAAIAAAAEAAYAAAAGAAEAAAAEAAcAAAAFAAIAAAAFAAYAAAAGAAEAAAAFAAUAAAAGAAEAAAAEAAUAAAAGAAEAAAAGAAUAAAAGAAEAAAAGAAYAAAAGAAEAAAAGAAcAAAAGAAIAAAAFAAcAAAAGAAIAAAAHAAcAAAAGAAIAAAAIAAcAAAAHAAIAAAAIAAYAAAAHAAEAAAAHAAYAAAAGAAEAAAAIAAQAAAAGAAAAAAAHAAQAAAAGAAAAAAAHAAUAAAAGAAEAAAAIAAUAAAAGAAEAAAAJAAUAAAAGAAIAAAAKAAUAAAAGAAEAAAAKAAYAAAAFAAIAAAALAAYAAAAGAAEAAAALAAcAAAAFAAIAAAAMAAcAAAAGAAEAAAANAAgAAAAGAAIAAAAOAAgAAAAHAAIAAAAPAAcAAAAHAAIAAAAPAAYAAAAHAAEAAAAOAAcAAAAGAAEAAAANAAcAAAAGAAEAAAAMAAgAAAAFAAIAAAANAAYAAAAGAAEAAAAMAAYAAAAGAAEAAAAMAAUAAAAGAAEAAAALAAUAAAAGAAEAAAANAAUAAAAGAAEAAAAOAAUAAAAGAAEAAAAOAAQAAAAHAAEAAAAOAAMAAAAHAAAAAAANAAMAAAAGAAEAAAANAAQAAAAGAAEAAAAMAAQAAAAGAAEAAAALAAQAAAAGAAEAAAALAAMAAAAFAAAAAAAMAAMAAAAGAAEAAAANAAIAAAAHAAAAAAAMAAIAAAAFAAAAAAAJAAQAAAAGAAAAAAAKAAQAAAAGAAAAAAAPAAUAAAAHAAAAAAAOAAYAAAAGAAEAAAA=")
-tile_set = ExtResource("2_sbk22")
-
-[node name="ResourceTileMapLayer" type="TileMapLayer" parent="YSortRoot/BaseTerrainTileMapLayer"]
-y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAFAAQAAQAAAAAAAAAFAAMAAQAAAAAAAAAGAAMAAQAAAAAAAAAGAAQAAQAAAAAAAAAHAAQAAQAAAAAAAAAEAAQAAQAAAAAAAAAEAAMAAQAAAAAAAAAEAAIAAQAAAAAAAAAFAAIAAQAAAAAAAAAGAAIAAQAAAAAAAAAIAAQAAQAAAAAAAAA=")
 tile_set = ExtResource("2_sbk22")
 
 [node name="Base" parent="YSortRoot" instance=ExtResource("5_uawbt")]
-position = Vector2(384, 320)
 
 [node name="GoldMine" parent="YSortRoot" instance=ExtResource("7_5pci2")]
 unique_name_in_owner = true
-position = Vector2(832, 448)
 
 [node name="HighlightTileMapLayer" type="TileMapLayer" parent="."]
 modulate = Color(1, 1, 1, 0.478431)
