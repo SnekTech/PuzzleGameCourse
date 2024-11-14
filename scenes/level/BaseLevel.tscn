@@ -30,6 +30,10 @@ y_sort_enabled = true
 y_sort_enabled = true
 tile_set = ExtResource("2_sbk22")
 
+[node name="FoamTileMapLayer" type="TileMapLayer" parent="YSortRoot/BaseTerrainTileMapLayer"]
+y_sort_enabled = true
+tile_set = ExtResource("2_sbk22")
+
 [node name="Base" parent="YSortRoot" instance=ExtResource("5_uawbt")]
 
 [node name="GoldMine" parent="YSortRoot" instance=ExtResource("7_5pci2")]
