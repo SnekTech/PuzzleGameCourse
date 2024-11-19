@@ -12,6 +12,7 @@ public partial class BuildingManager : Node
     private static readonly StringName ActionRightClick = "right_click";
     private static readonly StringName ActionCancel = "cancel";
 
+    [Export] private int startingResourceCount = 4;
     [Export] private GridManager gridManager;
     [Export] private GameUI gameUI;
     [Export] private Node2D ySortRoot;
@@ -24,14 +25,13 @@ public partial class BuildingManager : Node
     }
 
     private int _currentResourceCount;
-    private int _startingResourceCount = 4;
     private int _currentlyUsedResourceCount;
     private BuildingResource _toPlaceBuildingResource;
     private Vector2I _hoveredGridCell;
     private BuildingGhost _buildingGhost;
     private State _currentState = State.Normal;
 
-    private int AvailableResourceCount => _startingResourceCount + _currentResourceCount - _currentlyUsedResourceCount;
+    private int AvailableResourceCount => startingResourceCount + _currentResourceCount - _currentlyUsedResourceCount;
 
     public override void _Ready()
     {
