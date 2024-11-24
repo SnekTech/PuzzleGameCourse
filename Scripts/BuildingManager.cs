@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using PuzzleGameCourse.Building;
 using PuzzleGameCourse.Component;
@@ -27,7 +28,7 @@ public partial class BuildingManager : Node
     private int _currentResourceCount;
     private int _currentlyUsedResourceCount;
     private BuildingResource _toPlaceBuildingResource;
-    private Vector2I _hoveredGridCell;
+    private Rect2I _hoveredGridArea = new(Vector2I.Zero, Vector2I.One);
     private BuildingGhost _buildingGhost;
     private State _currentState = State.Normal;
 
@@ -58,7 +59,7 @@ public partial class BuildingManager : Node
                 else if (
                     _toPlaceBuildingResource != null &&
                     @event.IsActionPressed(ActionLeftClick) &&
-                    IsBuildingPlaceableAtTile(_hoveredGridCell)
+                    IsBuildingPlaceableAtArea(_hoveredGridArea)
                 )
                 {
                     PlaceBuildingAtHoveredCellPosition();
@@ -70,11 +71,12 @@ public partial class BuildingManager : Node
 
     public override void _Process(double delta)
     {
-        var gridPosition = gridManager.GetMouseGridCellPosition();
-        if (gridPosition != _hoveredGridCell)
+        var mouseGridPosition = gridManager.GetMouseGridCellPosition();
+        var rootCell = _hoveredGridArea.Position;
+        if (mouseGridPosition != rootCell)
         {
-            _hoveredGridCell = gridPosition;
-            UpdateHoveredGridCell();
+            _hoveredGridArea.Position = mouseGridPosition;
+            UpdateHoveredGridArea();
         }
 
         switch (_currentState)
@@ -82,7 +84,7 @@ public partial class BuildingManager : Node
             case State.Normal:
                 break;
             case State.PlacingBuilding:
-                _buildingGhost.GlobalPosition = gridPosition * 64;
+                _buildingGhost.GlobalPosition = mouseGridPosition * 64;
                 break;
         }
     }
@@ -91,11 +93,11 @@ public partial class BuildingManager : Node
     {
         gridManager.ClearHighlightedTiles();
         gridManager.HighLightBuildableTiles();
-        if (IsBuildingPlaceableAtTile(_hoveredGridCell))
+        if (IsBuildingPlaceableAtArea(_hoveredGridArea))
         {
-            gridManager.HighlightExpandedBuildableTiles(_hoveredGridCell,
+            gridManager.HighlightExpandedBuildableTiles(_hoveredGridArea,
                 _toPlaceBuildingResource.BuildableRadius);
-            gridManager.HighlightResourceTiles(_hoveredGridCell, _toPlaceBuildingResource.ResourceRadius);
+            gridManager.HighlightResourceTiles(_hoveredGridArea, _toPlaceBuildingResource.ResourceRadius);
             _buildingGhost.SetValid();
         }
         else
@@ -109,7 +111,7 @@ public partial class BuildingManager : Node
         var building = _toPlaceBuildingResource.BuildingScene.Instantiate<Node2D>();
         ySortRoot.AddChild(building);
 
-        building.GlobalPosition = _hoveredGridCell * 64;
+        building.GlobalPosition = _hoveredGridArea.Position * 64;
 
         _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
 
@@ -118,8 +120,9 @@ public partial class BuildingManager : Node
 
     private void DestroyBuildingAtHoveredCellPosition()
     {
+        var rootCell = _hoveredGridArea.Position;
         var buildingComponent = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>()
-            .FirstOrDefault(buildingComponent => buildingComponent.GetGridCellPosition() == _hoveredGridCell);
+            .FirstOrDefault(buildingComponent => buildingComponent.GetGridCellPosition() == rootCell);
         if (buildingComponent == null)
             return;
 
@@ -140,13 +143,28 @@ public partial class BuildingManager : Node
         _buildingGhost = null;
     }
 
-    private bool IsBuildingPlaceableAtTile(Vector2I tilePosition)
+    private bool IsBuildingPlaceableAtArea(Rect2I tileArea)
     {
-        return gridManager.IsTilePositionBuildable(tilePosition) &&
-               AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost;
+        var tilesInArea = GetTilePositionsInTileArea(tileArea);
+        var allTilesBuildable = tilesInArea.All(tilePosition => gridManager.IsTilePositionBuildable(tilePosition));
+        return allTilesBuildable && AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost;
     }
 
-    private void UpdateHoveredGridCell()
+    private List<Vector2I> GetTilePositionsInTileArea(Rect2I tileArea)
+    {
+        var result = new List<Vector2I>();
+        for (var x = tileArea.Position.X; x < tileArea.End.X; x++)
+        {
+            for (var y = tileArea.Position.Y; y < tileArea.End.Y; y++)
+            {
+                result.Add(new Vector2I(x, y));
+            }
+        }
+
+        return result;
+    }
+
+    private void UpdateHoveredGridArea()
     {
         switch (_currentState)
         {
@@ -191,6 +209,7 @@ public partial class BuildingManager : Node
     private void OnBuildingResourceSelected(BuildingResource buildingResource)
     {
         ChangeState(State.PlacingBuilding);
+        _hoveredGridArea.Size = buildingResource.Dimensions;
         var buildingSprite = buildingResource.SpriteScene.Instantiate<Sprite2D>();
         _buildingGhost.AddChild(buildingSprite);
         _toPlaceBuildingResource = buildingResource;
