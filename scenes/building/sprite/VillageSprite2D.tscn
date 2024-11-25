@@ -6,4 +6,4 @@
 position = Vector2(64, 96)
 texture = ExtResource("1_gex3c")
 centered = false
-offset = Vector2(-64, -172)
+offset = Vector2(-64, -170)
