@@ -123,7 +123,7 @@ public partial class BuildingManager : Node
         var rootCell = _hoveredGridArea.Position;
         var buildingComponent = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>()
             .FirstOrDefault(buildingComponent => buildingComponent.BuildingResource.IsDeletable &&
-                                                 buildingComponent.GetGridCellPosition() == rootCell);
+                                                 buildingComponent.IsTileInBuildingArea(rootCell));
         if (buildingComponent == null)
             return;
 
