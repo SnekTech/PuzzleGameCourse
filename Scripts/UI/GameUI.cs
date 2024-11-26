@@ -8,17 +8,23 @@ public partial class GameUI : CanvasLayer
     [Signal]
     public delegate void BuildingResourceSelectedEventHandler(BuildingResource buildingResource);
 
+    [Export] private BuildingManager buildingManager;
+
     [Export] private BuildingResource[] buildingResources;
 
     [Export] private PackedScene buildingSectionScene;
 
     private VBoxContainer buildingSectionContainer;
+    private Label resourceLabel;
 
     public override void _Ready()
     {
         buildingSectionContainer = GetNode<VBoxContainer>("%BuildingSectionContainer");
+        resourceLabel = GetNode<Label>("%ResourceLabel");
 
         CreateBuildingSections();
+
+        buildingManager.AvailableResourceCountChanged += OnAvailableResourceCountChanged;
     }
 
     private void CreateBuildingSections()
@@ -34,5 +40,10 @@ public partial class GameUI : CanvasLayer
                 EmitSignal(SignalName.BuildingResourceSelected, buildingResource);
             };
         }
+    }
+
+    private void OnAvailableResourceCountChanged(int availableResourceCount)
+    {
+        resourceLabel.Text = availableResourceCount.ToString();
     }
 }
