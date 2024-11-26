@@ -1,27 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://q83tulyjm3ne"]
+[gd_scene load_steps=4 format=3 uid="uid://q83tulyjm3ne"]
 
 [ext_resource type="Script" path="res://Scripts/UI/GameUI.cs" id="1_o1hrx"]
 [ext_resource type="Resource" uid="uid://bomrocumtif7u" path="res://resources/building/tower.tres" id="2_8crnl"]
 [ext_resource type="Resource" uid="uid://bqxnov1bjsj7h" path="res://resources/building/village.tres" id="3_btvqm"]
-[ext_resource type="Texture2D" uid="uid://cm07y14bojm04" path="res://assets/UI/banner_vertical.png" id="4_72hmd"]
-[ext_resource type="Texture2D" uid="uid://dqpgwbx631rbe" path="res://assets/UI/carved_nine_slides.png" id="5_s27ov"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ouhk7"]
-texture = ExtResource("4_72hmd")
-texture_margin_left = 32.0
-texture_margin_top = 40.0
-texture_margin_right = 32.0
-texture_margin_bottom = 40.0
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
-region_rect = Rect2(32, 24, 128, 144)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sgit5"]
-texture = ExtResource("5_s27ov")
-texture_margin_left = 24.0
-texture_margin_top = 24.0
-texture_margin_right = 24.0
-texture_margin_bottom = 24.0
 
 [node name="GameUI" type="CanvasLayer"]
 script = ExtResource("1_o1hrx")
@@ -41,14 +22,13 @@ theme_override_constants/margin_bottom = 16
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxTexture_ouhk7")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer"]
 layout_mode = 2
 
 [node name="BuildingButton" type="PanelContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_sgit5")
+theme_type_variation = &"PanelContainerAlternate"
 
 [node name="Button" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BuildingButton"]
 layout_mode = 2
