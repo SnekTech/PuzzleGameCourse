@@ -1,11 +1,13 @@
-[gd_scene load_steps=5 format=4 uid="uid://16gr8f0ibasp"]
+[gd_scene load_steps=6 format=4 uid="uid://16gr8f0ibasp"]
 
+[ext_resource type="Script" path="res://Scripts/UI/MainMenu.cs" id="1_uelbr"]
 [ext_resource type="TileSet" uid="uid://bnocn3brgbshk" path="res://resources/tiles.tres" id="2_m04se"]
 [ext_resource type="PackedScene" uid="uid://snv6iiui6p75" path="res://scenes/building/Base.tscn" id="3_2l46c"]
 [ext_resource type="PackedScene" uid="uid://ujunmgjuo58u" path="res://scenes/level/util/ElevationLayer.tscn" id="3_djx5m"]
 [ext_resource type="PackedScene" uid="uid://c3wto5nueea3" path="res://scenes/GoldMine.tscn" id="4_5f43o"]
 
 [node name="MainMenu" type="Node"]
+script = ExtResource("1_uelbr")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(768, 320)
@@ -81,15 +83,16 @@ custom_minimum_size = Vector2(192, 0)
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Button" type="Button" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="PlayButton" type="Button" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Play"
 
-[node name="Button2" type="Button" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="OptionsButton" type="Button" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Options"
 
-[node name="Button3" type="Button" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Quit"
 

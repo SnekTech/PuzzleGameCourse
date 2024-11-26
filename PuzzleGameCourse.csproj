@@ -6,7 +6,4 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <LangVersion>12</LangVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\Autoload\" />
-  </ItemGroup>
 </Project>

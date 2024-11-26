@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bh40o3wjy2es0"]
+
+[ext_resource type="Script" path="res://Scripts/Autoload/LevelManager.cs" id="1_0rvnr"]
+[ext_resource type="PackedScene" uid="uid://cl8uwkov1x26d" path="res://scenes/level/Level1.tscn" id="2_0qytd"]
+
+[node name="LevelManager" type="Node"]
+script = ExtResource("1_0rvnr")
+levelScenes = Array[PackedScene]([ExtResource("2_0qytd")])
