@@ -1,4 +1,5 @@
 using Godot;
+using PuzzleGameCourse.Resources.Level;
 using PuzzleGameCourse.UI;
 
 namespace PuzzleGameCourse;
@@ -6,14 +7,16 @@ namespace PuzzleGameCourse;
 public partial class BaseLevel : Node
 {
     [Export] private PackedScene levelCompleteScreenScene;
-    
+    [Export] private LevelDefinitionResource levelDefinitionResource;
+
     private GridManager gridManager;
     private GoldMine goldMine;
     private GameCamera gameCamera;
     private Node2D baseBuilding;
     private TileMapLayer baseTerrainTileMapLayer;
     private GameUI gameUI;
-    
+    private BuildingManager buildingManager;
+
     public override void _Ready()
     {
         gridManager = GetNode<GridManager>("GridManager");
@@ -22,7 +25,10 @@ public partial class BaseLevel : Node
         baseTerrainTileMapLayer = GetNode<TileMapLayer>("%BaseTerrainTileMapLayer");
         baseBuilding = GetNode<Node2D>("%Base");
         gameUI = GetNode<GameUI>("GameUI");
+        buildingManager = GetNode<BuildingManager>("BuildingManager");
         
+        buildingManager.SetStartingResourceCount(levelDefinitionResource.StartingResourceCount);
+
         gameCamera.SetBoundingRect(baseTerrainTileMapLayer.GetUsedRect());
         gameCamera.CenterOnPosition(baseBuilding.GlobalPosition);
 

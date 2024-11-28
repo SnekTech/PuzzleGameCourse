@@ -15,7 +15,6 @@ public partial class BuildingManager : Node
     [Signal]
     public delegate void AvailableResourceCountChangedEventHandler(int availableResourceCount);
 
-    [Export] private int startingResourceCount = 4;
     [Export] private GridManager gridManager;
     [Export] private GameUI gameUI;
     [Export] private Node2D ySortRoot;
@@ -27,6 +26,7 @@ public partial class BuildingManager : Node
         PlacingBuilding
     }
 
+    private int _startingResourceCount;
     private int _currentResourceCount;
     private int _currentlyUsedResourceCount;
     private BuildingResource _toPlaceBuildingResource;
@@ -34,7 +34,7 @@ public partial class BuildingManager : Node
     private BuildingGhost _buildingGhost;
     private State _currentState = State.Normal;
 
-    private int AvailableResourceCount => startingResourceCount + _currentResourceCount - _currentlyUsedResourceCount;
+    private int AvailableResourceCount => _startingResourceCount + _currentResourceCount - _currentlyUsedResourceCount;
 
     public override void _Ready()
     {
@@ -92,6 +92,11 @@ public partial class BuildingManager : Node
                 _buildingGhost.GlobalPosition = mouseGridPosition * 64;
                 break;
         }
+    }
+
+    public void SetStartingResourceCount(int count)
+    {
+        _startingResourceCount = count;
     }
 
     private void UpdateGridDisplay()
