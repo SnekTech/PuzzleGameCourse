@@ -24,6 +24,7 @@ public partial class GridManager : Node
     [Export] private TileMapLayer _baseTerrainTileMapLayer;
 
     private readonly HashSet<Vector2I> _validBuildableTiles = [];
+    private readonly HashSet<Vector2I> _allTilesInBuildingRadius = [];
     private readonly HashSet<Vector2I> _collectedResourceTiles = [];
     private readonly HashSet<Vector2I> _occupiedTiles = [];
     private List<TileMapLayer> _allTileMapLayersDFS;
@@ -58,19 +59,24 @@ public partial class GridManager : Node
         return _validBuildableTiles.Contains(tilePosition);
     }
 
+    public bool IsTilePositionInAnyBuildingRadius(Vector2I tilePosition)
+    {
+        return _allTilesInBuildingRadius.Contains(tilePosition);
+    }
+
     public bool IsTileAreaBuildable(Rect2I tileArea)
     {
         var tiles = tileArea.ToTiles();
         if (tiles.Count == 0) return false;
 
         var (firstTileMapLayer, _) = GetTileCustomData(tiles[0], IsBuildable);
-        var targetElevationLayer = _tileMapLayerToElevationLayer[firstTileMapLayer];
+        var targetElevationLayer = firstTileMapLayer != null ? _tileMapLayerToElevationLayer[firstTileMapLayer] : null;
 
         return tiles.All(tilePosition =>
         {
             var (tileMapLayer, isBuildable) = GetTileCustomData(tilePosition, IsBuildable);
-            return isBuildable && _validBuildableTiles.Contains(tilePosition) &&
-                   _tileMapLayerToElevationLayer[tileMapLayer] == targetElevationLayer;
+            var elevationLayer = tileMapLayer != null ? _tileMapLayerToElevationLayer[tileMapLayer] : null;
+            return isBuildable && _validBuildableTiles.Contains(tilePosition) && elevationLayer == targetElevationLayer;
         });
     }
 
@@ -164,6 +170,10 @@ public partial class GridManager : Node
         _occupiedTiles.UnionWith(buildingComponent.GetOccupiedCellPositions());
         var rootCell = buildingComponent.GetGridCellPosition();
         var tileArea = new Rect2I(rootCell, buildingComponent.BuildingResource.Dimensions);
+
+        var allTiles = GetTilesInRadius(tileArea, buildingComponent.BuildingResource.BuildableRadius, _ => true);
+        _allTilesInBuildingRadius.UnionWith(allTiles);
+
         var validTiles = GetValidTilesInRadius(tileArea, buildingComponent.BuildingResource.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
         _validBuildableTiles.ExceptWith(_occupiedTiles);
@@ -189,6 +199,7 @@ public partial class GridManager : Node
     {
         _occupiedTiles.Clear();
         _validBuildableTiles.Clear();
+        _allTilesInBuildingRadius.Clear();
         _collectedResourceTiles.Clear();
 
         var buildingComponents = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>()
