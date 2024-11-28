@@ -1,14 +1,18 @@
 using Godot;
+using PuzzleGameCourse.UI;
 
 namespace PuzzleGameCourse;
 
 public partial class BaseLevel : Node
 {
+    [Export] private PackedScene levelCompleteScreenScene;
+    
     private GridManager gridManager;
     private GoldMine goldMine;
     private GameCamera gameCamera;
     private Node2D baseBuilding;
     private TileMapLayer baseTerrainTileMapLayer;
+    private GameUI gameUI;
     
     public override void _Ready()
     {
@@ -17,6 +21,7 @@ public partial class BaseLevel : Node
         gameCamera = GetNode<GameCamera>("GameCamera");
         baseTerrainTileMapLayer = GetNode<TileMapLayer>("%BaseTerrainTileMapLayer");
         baseBuilding = GetNode<Node2D>("%Base");
+        gameUI = GetNode<GameUI>("GameUI");
         
         gameCamera.SetBoundingRect(baseTerrainTileMapLayer.GetUsedRect());
         gameCamera.CenterOnPosition(baseBuilding.GlobalPosition);
@@ -29,8 +34,10 @@ public partial class BaseLevel : Node
         var goldMineTilePosition = gridManager.ConvertWorldPositionToTilePosition(goldMine.GlobalPosition);
         if (gridManager.IsTilePositionBuildable(goldMineTilePosition))
         {
+            var levelCompleteScreen = levelCompleteScreenScene.Instantiate<LevelCompleteScreen>();
+            AddChild(levelCompleteScreen);
             goldMine.SetActive();
-            GD.Print("Win!");
+            gameUI.HideUI();
         }
     }
 }
