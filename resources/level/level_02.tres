@@ -6,4 +6,4 @@
 script = ExtResource("1_tb75i")
 Id = "apple"
 StartingResourceCount = 4
-LevelScenePath = "res://scenes/level/Level3.tscn"
+LevelScenePath = "res://scenes/level/Level2.tscn"

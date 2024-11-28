@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System.Linq;
+using Godot;
+using PuzzleGameCourse.Resources.Level;
 
 namespace PuzzleGameCourse.Autoload;
 
@@ -6,7 +8,7 @@ public partial class LevelManager : Node
 {
     public static LevelManager Instance { get; private set; }
 
-    [Export] private PackedScene[] levelScenes;
+    [Export] private LevelDefinitionResource[] levelDefinitions;
 
     private int _currentLevelIndex;
 
@@ -18,13 +20,18 @@ public partial class LevelManager : Node
         }
     }
 
+    public static LevelDefinitionResource[] GetLevelDefinitions()
+    {
+        return Instance.levelDefinitions.ToArray();
+    }
+
     public void ChangeToLevel(int levelIndex)
     {
-        if (levelIndex >= levelScenes.Length || levelIndex < 0) return;
+        if (levelIndex >= levelDefinitions.Length || levelIndex < 0) return;
         _currentLevelIndex = levelIndex;
 
-        var levelScene = levelScenes[_currentLevelIndex];
-        GetTree().ChangeSceneToPacked(levelScene);
+        var levelDefinition = levelDefinitions[_currentLevelIndex];
+        GetTree().ChangeSceneToFile(levelDefinition.LevelScenePath);
     }
 
     public void ChangeToNextLevel()

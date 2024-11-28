@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bwl2d2bim45aw"]
+[gd_scene load_steps=3 format=3 uid="uid://bwl2d2bim45aw"]
 
+[ext_resource type="Script" path="res://Scripts/UI/LevelSelectScreen.cs" id="1_epvjb"]
 [ext_resource type="PackedScene" uid="uid://cut0ctjs74vc" path="res://scenes/UI/LevelSelectSection.tscn" id="1_q50jg"]
 
 [node name="LevelSelectScreen" type="MarginContainer"]
@@ -8,6 +9,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_epvjb")
+levelSelectSectionScene = ExtResource("1_q50jg")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2
@@ -22,10 +25,8 @@ theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 16
 theme_override_constants/v_separation = 16
 columns = 4
-
-[node name="LevelSelectSection" parent="PanelContainer/MarginContainer/GridContainer" instance=ExtResource("1_q50jg")]
-layout_mode = 2

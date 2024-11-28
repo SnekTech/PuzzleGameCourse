@@ -6,4 +6,4 @@
 script = ExtResource("1_en7j5")
 Id = "banana"
 StartingResourceCount = 4
-LevelScenePath = "res://scenes/level/Level1.tscn"
+LevelScenePath = "res://scenes/level/Level3.tscn"
