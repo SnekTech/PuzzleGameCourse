@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwx3l8fc5xuau"]
+
+[ext_resource type="Script" path="res://Scripts/Component/BuildingAnimatorComponent.cs" id="1_yklte"]
+
+[node name="BuildingAnimatorComponent" type="Node2D"]
+script = ExtResource("1_yklte")
