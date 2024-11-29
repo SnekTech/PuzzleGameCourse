@@ -210,6 +210,7 @@ public partial class BuildingManager : Node
         _hoveredGridArea.Size = buildingResource.Dimensions;
         var buildingSprite = buildingResource.SpriteScene.Instantiate<Sprite2D>();
         _buildingGhost.AddChild(buildingSprite);
+        _buildingGhost.SetDimensions(buildingResource.Dimensions);
         _toPlaceBuildingResource = buildingResource;
         UpdateGridDisplay();
     }
