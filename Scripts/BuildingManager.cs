@@ -2,6 +2,7 @@
 using Godot;
 using PuzzleGameCourse.Building;
 using PuzzleGameCourse.Component;
+using PuzzleGameCourse.CustomExtensions;
 using PuzzleGameCourse.UI;
 
 namespace PuzzleGameCourse;
@@ -128,6 +129,7 @@ public partial class BuildingManager : Node
         ySortRoot.AddChild(building);
 
         building.GlobalPosition = _hoveredGridArea.Position * 64;
+        building.GetFirstNodeOfType<BuildingAnimatorComponent>()?.PlayInAnimation();
 
         _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
 

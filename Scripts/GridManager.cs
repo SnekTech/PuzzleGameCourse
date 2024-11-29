@@ -4,6 +4,7 @@ using System.Linq;
 using Godot;
 using PuzzleGameCourse.Autoload;
 using PuzzleGameCourse.Component;
+using PuzzleGameCourse.CustomExtensions;
 using PuzzleGameCourse.Terrain;
 
 namespace PuzzleGameCourse;

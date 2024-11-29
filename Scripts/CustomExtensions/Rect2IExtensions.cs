@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Godot;
 
-namespace PuzzleGameCourse;
+namespace PuzzleGameCourse.CustomExtensions;
 
 public static class Rect2IExtensions
 {

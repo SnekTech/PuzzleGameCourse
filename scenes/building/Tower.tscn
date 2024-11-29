@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cer23hq00nvss"]
+[gd_scene load_steps=4 format=3 uid="uid://cer23hq00nvss"]
 
 [ext_resource type="PackedScene" uid="uid://crmfpfrct8dr1" path="res://scenes/component/BuildingComponent.tscn" id="1_crhd5"]
 [ext_resource type="PackedScene" uid="uid://d15jatqxlqdl4" path="res://scenes/building/sprite/TowerSprite2D.tscn" id="2_hx2ry"]
+[ext_resource type="PackedScene" uid="uid://cwx3l8fc5xuau" path="res://scenes/component/BuildingAnimatorComponent.tscn" id="2_qwn37"]
 
 [node name="Tower" type="Node2D"]
 y_sort_enabled = true
@@ -9,4 +10,6 @@ y_sort_enabled = true
 [node name="BuildingComponent" parent="." instance=ExtResource("1_crhd5")]
 BuildingResourcePath = "res://resources/building/tower.tres"
 
-[node name="TowerSprite2D" parent="." instance=ExtResource("2_hx2ry")]
+[node name="BuildingAnimatorComponent" parent="." instance=ExtResource("2_qwn37")]
+
+[node name="TowerSprite2D" parent="BuildingAnimatorComponent" instance=ExtResource("2_hx2ry")]
