@@ -140,7 +140,7 @@ public partial class BuildingManager : Node
     private void DestroyBuildingAtHoveredCellPosition()
     {
         var rootCell = _hoveredGridArea.Position;
-        var buildingComponent = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>()
+        var buildingComponent = BuildingComponent.GetValidBuildingComponents(this)
             .FirstOrDefault(buildingComponent => buildingComponent.BuildingResource.IsDeletable &&
                                                  buildingComponent.IsTileInBuildingArea(rootCell));
         if (buildingComponent == null)

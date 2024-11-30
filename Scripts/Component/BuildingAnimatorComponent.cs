@@ -28,9 +28,6 @@ public partial class BuildingAnimatorComponent : Node2D
             activeTween.Kill();
         }
 
-        maskNode.ClipChildren = ClipChildrenMode.Only;
-        maskNode.Texture = maskTexture;
-
         activeTween = CreateTween();
         activeTween.TweenProperty(animationRootNode, "position", Vector2.Zero, 0.3)
             .SetTrans(Tween.TransitionType.Quad)
@@ -53,7 +50,10 @@ public partial class BuildingAnimatorComponent : Node2D
             activeTween.Kill();
         }
         
-        
+        animationRootNode.Position = Vector2.Zero;
+
+        maskNode.ClipChildren = ClipChildrenMode.Only;
+        maskNode.Texture = maskTexture;
 
         activeTween = CreateTween();
         activeTween.TweenProperty(animationRootNode, PropertyName.RotationDegrees.ToString(), -5, 0.1);
