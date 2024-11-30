@@ -8,6 +8,7 @@ public partial class BuildingAnimatorComponent : Node2D
     [Signal]
     public delegate void DestroyAnimationFinishedEventHandler();
 
+    [Export] private PackedScene impactParticlesScene;
     [Export] private Texture2D maskTexture;
     
     private Tween activeTween;
@@ -33,6 +34,13 @@ public partial class BuildingAnimatorComponent : Node2D
             .SetTrans(Tween.TransitionType.Quad)
             .SetEase(Tween.EaseType.In)
             .From(Vector2.Up * 128);
+        activeTween.TweenCallback(Callable.From(() =>
+        {
+            var impactParticles = impactParticlesScene.Instantiate<Node2D>();
+            GetParent().AddChild(impactParticles);
+            impactParticles.GlobalPosition = GlobalPosition;
+        }));
+        
         activeTween.TweenProperty(animationRootNode, new NodePath(PropertyName.Position), Vector2.Up * 16, 0.1)
             .SetTrans(Tween.TransitionType.Quad)
             .SetEase(Tween.EaseType.Out);

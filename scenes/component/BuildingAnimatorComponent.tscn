@@ -1,8 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cwx3l8fc5xuau"]
+[gd_scene load_steps=4 format=3 uid="uid://cwx3l8fc5xuau"]
 
 [ext_resource type="Script" path="res://Scripts/Component/BuildingAnimatorComponent.cs" id="1_yklte"]
+[ext_resource type="PackedScene" uid="uid://nl8n3uk27k5p" path="res://scenes/effect/BuildingImpactParticles.tscn" id="2_dlkcg"]
 [ext_resource type="Texture2D" uid="uid://bdopaoigas51n" path="res://assets/buildings/building_mask.png" id="2_ucme0"]
 
 [node name="BuildingAnimatorComponent" type="Node2D"]
 script = ExtResource("1_yklte")
+impactParticlesScene = ExtResource("2_dlkcg")
 maskTexture = ExtResource("2_ucme0")
