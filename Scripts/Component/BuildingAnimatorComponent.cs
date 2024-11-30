@@ -9,8 +9,9 @@ public partial class BuildingAnimatorComponent : Node2D
     public delegate void DestroyAnimationFinishedEventHandler();
 
     [Export] private PackedScene impactParticlesScene;
+    [Export] private PackedScene destroyParticlesScene;
     [Export] private Texture2D maskTexture;
-    
+
     private Tween activeTween;
     private Node2D animationRootNode;
     private Sprite2D maskNode;
@@ -37,10 +38,10 @@ public partial class BuildingAnimatorComponent : Node2D
         activeTween.TweenCallback(Callable.From(() =>
         {
             var impactParticles = impactParticlesScene.Instantiate<Node2D>();
-            GetParent().AddChild(impactParticles);
+            Owner.GetParent().AddChild(impactParticles);
             impactParticles.GlobalPosition = GlobalPosition;
         }));
-        
+
         activeTween.TweenProperty(animationRootNode, new NodePath(PropertyName.Position), Vector2.Up * 16, 0.1)
             .SetTrans(Tween.TransitionType.Quad)
             .SetEase(Tween.EaseType.Out);
@@ -57,11 +58,15 @@ public partial class BuildingAnimatorComponent : Node2D
         {
             activeTween.Kill();
         }
-        
+
         animationRootNode.Position = Vector2.Zero;
 
         maskNode.ClipChildren = ClipChildrenMode.Only;
         maskNode.Texture = maskTexture;
+
+        var destroyParticles = destroyParticlesScene.Instantiate<Node2D>();
+        Owner.GetParent().AddChild(destroyParticles);
+        destroyParticles.GlobalPosition = GlobalPosition;
 
         activeTween = CreateTween();
         activeTween.TweenProperty(animationRootNode, PropertyName.RotationDegrees.ToString(), -5, 0.1);
@@ -90,7 +95,7 @@ public partial class BuildingAnimatorComponent : Node2D
             Offset = new Vector2(-160, -256)
         };
         AddChild(maskNode);
-        
+
         animationRootNode = new Node2D();
         maskNode.AddChild(animationRootNode);
         animationRootNode.AddChild(spriteNode);
