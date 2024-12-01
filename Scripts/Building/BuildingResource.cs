@@ -37,4 +37,6 @@ public partial class BuildingResource : Resource
 
     [Export]
     public PackedScene SpriteScene { get; private set; }
+
+    public bool IsAttackBuilding => AttackRadius > 0;
 }

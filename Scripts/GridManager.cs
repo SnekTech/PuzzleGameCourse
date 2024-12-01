@@ -25,6 +25,7 @@ public partial class GridManager : Node
     [Export] private TileMapLayer _baseTerrainTileMapLayer;
 
     private readonly HashSet<Vector2I> _validBuildableTiles = [];
+    private readonly HashSet<Vector2I> _validAttackTiles = [];
     private readonly HashSet<Vector2I> _allTilesInBuildingRadius = [];
     private readonly HashSet<Vector2I> _collectedResourceTiles = [];
     private readonly HashSet<Vector2I> _occupiedTiles = [];
@@ -56,17 +57,12 @@ public partial class GridManager : Node
         return (null, false);
     }
 
-    public bool IsTilePositionBuildable(Vector2I tilePosition)
-    {
-        return _validBuildableTiles.Contains(tilePosition);
-    }
-
     public bool IsTilePositionInAnyBuildingRadius(Vector2I tilePosition)
     {
         return _allTilesInBuildingRadius.Contains(tilePosition);
     }
 
-    public bool IsTileAreaBuildable(Rect2I tileArea)
+    public bool IsTileAreaBuildable(Rect2I tileArea, bool isAttackTiles = false)
     {
         var tiles = tileArea.ToTiles();
         if (tiles.Count == 0) return false;
@@ -78,7 +74,7 @@ public partial class GridManager : Node
         {
             var (tileMapLayer, isBuildable) = GetTileCustomData(tilePosition, IsBuildable);
             var elevationLayer = tileMapLayer != null ? _tileMapLayerToElevationLayer[tileMapLayer] : null;
-            return isBuildable && _validBuildableTiles.Contains(tilePosition) && elevationLayer == targetElevationLayer;
+            return isBuildable && GetBuildableTileSet(isAttackTiles).Contains(tilePosition) && elevationLayer == targetElevationLayer;
         });
     }
 
@@ -91,9 +87,9 @@ public partial class GridManager : Node
         }
     }
 
-    public void HighLightBuildableTiles()
+    public void HighLightBuildableTiles(bool isAttackTiles = false)
     {
-        foreach (var tilePosition in _validBuildableTiles)
+        foreach (var tilePosition in GetBuildableTileSet(isAttackTiles))
         {
             _highlightTileMapLayer.SetCell(tilePosition, 0, Vector2I.Zero);
         }
@@ -103,7 +99,7 @@ public partial class GridManager : Node
     {
         var validTiles = GetValidTilesInRadius(tileArea, radius).ToHashSet();
         var expandedTiles = validTiles
-            .Except(_validBuildableTiles).Except(_occupiedTiles).Except(_goblinOccupiedTiles);
+            .Except(_validBuildableTiles).Except(_occupiedTiles);
         var altasCoords = new Vector2I(1, 0);
         foreach (var tilePosition in expandedTiles)
         {
@@ -145,6 +141,11 @@ public partial class GridManager : Node
         var tilePosition = worldPosition / 64;
         tilePosition = tilePosition.Floor();
         return new Vector2I((int)tilePosition.X, (int)tilePosition.Y);
+    }
+
+    private HashSet<Vector2I> GetBuildableTileSet(bool isAttackTiles = false)
+    {
+        return isAttackTiles ? _validAttackTiles : _validBuildableTiles;
     }
 
     private List<TileMapLayer> GetAllTileMapLayersDFS(Node2D rootNode)
@@ -211,6 +212,8 @@ public partial class GridManager : Node
         var validTiles = GetValidTilesInRadius(tileArea, buildingComponent.BuildingResource.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
         _validBuildableTiles.ExceptWith(_occupiedTiles);
+        _validAttackTiles.UnionWith(_validBuildableTiles);
+
         _validBuildableTiles.ExceptWith(_goblinOccupiedTiles);
         EmitSignal(SignalName.GridStateUpdated);
     }
@@ -234,13 +237,16 @@ public partial class GridManager : Node
     {
         _occupiedTiles.Clear();
         _validBuildableTiles.Clear();
+        _validAttackTiles.Clear();
         _allTilesInBuildingRadius.Clear();
         _collectedResourceTiles.Clear();
+        _goblinOccupiedTiles.Clear();
 
         var buildingComponents = BuildingComponent.GetValidBuildingComponents(this);
 
         foreach (var buildingComponent in buildingComponents)
         {
+            UpdateGoblinOccupiedTiles(buildingComponent);
             UpdateValidBuildableTiles(buildingComponent);
             UpdateCollectedResourceTiles(buildingComponent);
         }

@@ -107,8 +107,17 @@ public partial class BuildingManager : Node
     private void UpdateGridDisplay()
     {
         gridManager.ClearHighlightedTiles();
-        gridManager.HighLightBuildableTiles();
-        gridManager.HighlightGoblinOccupiedTiles();
+        if (_toPlaceBuildingResource.IsAttackBuilding)
+        {
+            gridManager.HighlightGoblinOccupiedTiles();
+            gridManager.HighLightBuildableTiles(true);
+        }
+        else
+        {
+            gridManager.HighLightBuildableTiles();
+            gridManager.HighlightGoblinOccupiedTiles();
+        }
+
         if (IsBuildingPlaceableAtArea(_hoveredGridArea))
         {
             gridManager.HighlightExpandedBuildableTiles(_hoveredGridArea,
@@ -166,7 +175,8 @@ public partial class BuildingManager : Node
 
     private bool IsBuildingPlaceableAtArea(Rect2I tileArea)
     {
-        var allTilesBuildable = gridManager.IsTileAreaBuildable(tileArea);
+        var isAttackTiles = _toPlaceBuildingResource.IsAttackBuilding;
+        var allTilesBuildable = gridManager.IsTileAreaBuildable(tileArea, isAttackTiles);
         return allTilesBuildable && AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost;
     }
 
