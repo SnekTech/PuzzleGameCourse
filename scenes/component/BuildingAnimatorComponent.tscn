@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bbicllntqatm1" path="res://scenes/effect/BuildingDestroyParticles.tscn" id="3_31a3g"]
 
 [node name="BuildingAnimatorComponent" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_yklte")
 impactParticlesScene = ExtResource("2_dlkcg")
 destroyParticlesScene = ExtResource("3_31a3g")
