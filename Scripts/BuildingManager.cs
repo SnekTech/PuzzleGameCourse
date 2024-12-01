@@ -108,6 +108,7 @@ public partial class BuildingManager : Node
     {
         gridManager.ClearHighlightedTiles();
         gridManager.HighLightBuildableTiles();
+        gridManager.HighlightGoblinOccupiedTiles();
         if (IsBuildingPlaceableAtArea(_hoveredGridArea))
         {
             gridManager.HighlightExpandedBuildableTiles(_hoveredGridArea,
